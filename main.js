@@ -5,6 +5,7 @@ define(function (require, exports, module) {
 
     var panel                   = require("text!templates/panel.html"),
         panelError              = require("text!templates/panelError.html"),
+        content                 = require("text!templates/content.html"),
         gist                    = require("text!templates/gist.html");
 
     var CommandManager          = brackets.getModule("command/CommandManager"),
@@ -62,38 +63,34 @@ define(function (require, exports, module) {
 
     }
 
-    function init() {
+    function loadContent() {
 
-        ExtensionUtils.loadStyleSheet(module, "styles/gist-manager.css");
+        var username = $panel.find("#github-username").val();
 
-        var menu = Menus.getMenu(Menus.AppMenuBar.VIEW_MENU);
-        menu.addMenuItem(TOGGLE_PANEL, null, Menus.AFTER);
-
-        var $panel;
-        $.getJSON("https://api.github.com/users/FezVrasta/gists", function(data) {
+        $.getJSON("https://api.github.com/users/" + username + "/gists", function(data) {
             gists = data;
 
-            $panel = $(Mustache.render(panel, {"gists": gists}));
+            var $content = $(Mustache.render(content, {"gists": gists}));
 
-            PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panel, 200);
+            $panel.find(".gist-manager-content").html($content);
 
             // Render the first gist
             renderGist(gists[0]);
 
             $panel
-                .on("click", ".close", function() { CommandManager.execute(TOGGLE_PANEL); })
-                .on("click", ".list-group-item", function(event) {
-                    console.log(gists);
+            .on("click", ".close", function() { CommandManager.execute(TOGGLE_PANEL); })
+            .on("click", ".list-group-item", function(event) {
+                console.log(gists);
 
-                    gists.forEach( function(gist) {
-                        if (gist.id == $(event.target).data("id")) {
-                            renderGist(gist);
-                            console.log(gist);
-                            return;
-                        }
-                    });
-
+                gists.forEach( function(gist) {
+                    if (gist.id == $(event.target).data("id")) {
+                        renderGist(gist);
+                        console.log(gist);
+                        return;
+                    }
                 });
+
+            });
 
         }).error( function() {
 
@@ -101,6 +98,19 @@ define(function (require, exports, module) {
             PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panelError, 200);
 
         });
+    }
+
+    function init() {
+
+        ExtensionUtils.loadStyleSheet(module, "styles/gist-manager.css");
+
+        var menu = Menus.getMenu(Menus.AppMenuBar.VIEW_MENU);
+        menu.addMenuItem(TOGGLE_PANEL, null, Menus.AFTER);
+
+        $panel = $(Mustache.render(panel));
+        PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panel, 200);
+
+        $panel.on("click", "#load-gists", loadContent);
 
     }
 

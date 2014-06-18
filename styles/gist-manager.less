@@ -3,7 +3,20 @@
 
 // Panel style
 #gist-manager {
+    .toolbar {
+        .title {
+            margin-right: 20px;
+        }
+        input {
+            margin: 0px;
+            width: 120px;
+            border-right: 0;
+            padding-top: 3px;
+            border-radius: 4px 0 0 4px;
+        }
+    }
     .gist-manager-content {
+        overflow: hidden;
         .list {
             float: left;
             width: @list-width;
@@ -70,6 +83,9 @@
                     }
                     &:last-child {
                         margin-bottom: 0px;
+                    }
+                    &:first-child {
+                        margin-bottom: 15px !important;
                     }
                 }
             }
