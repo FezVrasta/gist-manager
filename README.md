@@ -4,5 +4,7 @@ Gist Manager is a [Brackets](https://github.com/adobe/brackets) and [Adobe Edge 
 
 Simply specify the GitHub username you want to search and all the related gists will be shown in the list.
 
+To show Gist Manager open it clicking on **View > Show Gist Manager**.
+
 
 ![preview](/readmefiles/preview.jpg)
