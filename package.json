@@ -3,7 +3,7 @@
     "title": "Gist Manager",
     "description": "Create and view Github Gists within Brackets.",
     "homepage": "https://github.com/FezVrasta/",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "author": "Fez Vrasta <info@mywebexpression.com> (http://www.mywebexpression.com)",
     "license": "MIT",
     "engines": {
