@@ -14,6 +14,8 @@ define(function (require, exports, module) {
         Menus                   = brackets.getModule("command/Menus"),
         PanelManager            = brackets.getModule("view/PanelManager");
 
+    var Strings                 = require("strings");
+
     var $panel                  = $(),
         $panelError             = $(),
         gists                   = null;
@@ -80,12 +82,10 @@ define(function (require, exports, module) {
             $panel
             .on("click", ".close", function() { CommandManager.execute(TOGGLE_PANEL); })
             .on("click", ".list-group-item", function(event) {
-                console.log(gists);
 
                 gists.forEach( function(gist) {
                     if (gist.id == $(event.target).data("id")) {
                         renderGist(gist);
-                        console.log(gist);
                         return;
                     }
                 });
@@ -94,7 +94,7 @@ define(function (require, exports, module) {
 
         }).error( function() {
 
-            $panelError = $(Mustache.render(panelError));
+            $panelError = $(Mustache.render(panelError, Strings));
             PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panelError, 200);
 
         });
@@ -107,7 +107,7 @@ define(function (require, exports, module) {
         var menu = Menus.getMenu(Menus.AppMenuBar.VIEW_MENU);
         menu.addMenuItem(TOGGLE_PANEL, null, Menus.AFTER);
 
-        $panel = $(Mustache.render(panel));
+        $panel = $(Mustache.render(panel, Strings));
         PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panel, 200);
 
         $panel.on("click", "#load-gists", loadContent);
