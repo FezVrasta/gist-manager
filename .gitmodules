@@ -1,0 +1,3 @@
+[submodule "thirdparty/async"]
+	path = thirdparty/async
+	url = https://github.com/caolan/async.git

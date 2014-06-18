@@ -1,0 +1,78 @@
+// Variables
+@list-width: 200px;
+
+// Panel style
+#gist-manager {
+    .gist-manager-content {
+        .list {
+            float: left;
+            width: @list-width;
+            background-color: #FFFFFF;
+            height: 100%;
+            box-shadow: inset -1px 1px 0px #DDDDDD;
+            .list-group {
+                margin: 0;
+                .list-group-item {
+                    list-style: none;
+                    a {
+                        position: relative;
+                        display: block;
+                        padding: 10px 15px;
+                        margin-bottom: -1px;
+                        border: 1px solid #DDDDDD;
+                        &:hover {
+                            background-color: #F5F5F5;
+                            text-decoration: none;
+                        }
+                        &.active {
+                            color: #FFFFFF;
+                            background-color: #428BCA;
+                            border-color: #428BCA;
+                        }
+                    }
+                }
+            }
+        }
+        .viewer {
+            margin-left: @list-width;
+            padding: 10px;
+            overflow-y: scroll;
+            height: 100%;
+            box-sizing: border-box;
+            .gist {
+                display: none;
+                summary {
+                    padding: 0 10px 10px 10px;
+                }
+                .file {
+                    margin-bottom: 15px;
+                    border: 1px solid #DDDDDD;
+                    border-radius: 3px;
+                    .meta {
+                        padding: 5px 10px;
+                        font-size: 12px;
+                        text-align: left;
+                        color: #555;
+                        text-shadow: 0 1px 0 #FFFFFF;
+                        border-bottom: 1px solid #D8D8D8;
+                        background-color: #F7F7F7;
+                        border-top-left-radius: 3px;
+                        border-top-right-radius: 3px;
+                    }
+                    .blob pre{
+                        border-radius: 0;
+                        border: 0;
+                        margin: 0;
+                        code {
+                            -webkit-user-select: initial;
+                            cursor: text;
+                        }
+                    }
+                    &:last-child {
+                        margin-bottom: 0px;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,23 @@
+<div id="gist-manager" class="bottom-panel vert-resizable top-resizer">
+
+    <div class="toolbar simple-toolbar-layout">
+        <span class="title">Gist Manager</span>
+        <span class="pull-right">
+            <a href="#" class="close">&times;</a>
+        </span>
+    </div>
+
+    <div class="gist-manager-content resizable-content">
+        <div class="list">
+            <ul class="list-group">
+                {{#gists}}<li class="list-group-item"><a href="#{{id}}" data-id="{{id}}" title="{{description}}">gist:{{id}}</a></li>{{/gists}}
+            </ul>
+        </div>
+        <div class="viewer">
+            {{#gists}}
+                <div class="gist" id="{{id}}"></div>
+            {{/gists}}
+        </div>
+    </div>
+
+</div>
