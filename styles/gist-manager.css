@@ -55,10 +55,14 @@
 #gist-manager .gist-manager-content .viewer .gist {
   display: none;
 }
-#gist-manager .gist-manager-content .viewer .gist summary {
+#gist-manager .gist-manager-content .viewer .gist .gist-overview {
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+#gist-manager .gist-manager-content .viewer .gist .gist-overview summary {
   padding: 0 10px 10px 10px;
 }
-#gist-manager .gist-manager-content .viewer .gist .btn-group {
+#gist-manager .gist-manager-content .viewer .gist .gist-overview .btn-group {
   float: right;
 }
 #gist-manager .gist-manager-content .viewer .gist .file {
