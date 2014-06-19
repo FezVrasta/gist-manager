@@ -1,10 +1,10 @@
-/*global define, brackets, $, Mustache */
+/*global define, brackets, $, Mustache, btoa */
 
 define(function (require, exports, module) {
     "use strict";
 
     var panel                   = require("text!templates/panel.html"),
-        panelError              = require("text!templates/panelError.html"),
+        contentError              = require("text!templates/contentError.html"),
         content                 = require("text!templates/content.html"),
         gist                    = require("text!templates/gist.html");
 
@@ -17,7 +17,7 @@ define(function (require, exports, module) {
     var Strings                 = require("strings");
 
     var $panel                  = $(),
-        $panelError             = $(),
+        $content                = $(),
         gists                   = null;
 
     var TOGGLE_PANEL = "gist-manager.run";
@@ -65,14 +65,47 @@ define(function (require, exports, module) {
 
     }
 
-    function loadContent() {
+    function loadContent(username, password) {
 
-        var username = $panel.find("#github-username").val();
+        if (password.length) { // If a password is defined, then try to login and get secret gists beside the public ones
 
-        $.getJSON("https://api.github.com/users/" + username + "/gists", function(data) {
-            gists = data;
+            $.ajax
+            ({
+                type: "GET",
+                url: "https://api.github.com/gists",
+                dataType: "json",
+                async: false,
+                headers: {
+                    "Authorization": "Basic " + btoa(username + ":" + password)
+                },
+                success: function (data) {
+                    gists = data;
+                    _renderContent(gists);
+                },
+                error: function () {
+                    _renderContent([]);
+                }
+            });
 
-            var $content = $(Mustache.render(content, {"gists": gists}));
+        } else { // If password is not defined, get just the public gists of the selected user
+
+            $.getJSON("https://api.github.com/users/" + username + "/gists", function(data) {
+                gists = data;
+                _renderContent(gists);
+            })
+            .error( function() {
+                _renderContent([]);
+            });
+
+        }
+
+        function _renderContent(gists) {
+
+            if (gists.length > 0) {
+                $content = $(Mustache.render(content, {"gists": gists}));
+            } else {
+                $content = $(Mustache.render(contentError, Strings));
+            }
 
             $panel.find(".gist-manager-content").html($content);
 
@@ -91,13 +124,7 @@ define(function (require, exports, module) {
                 });
 
             });
-
-        }).error( function() {
-
-            $panelError = $(Mustache.render(panelError, Strings));
-            PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panelError, 200);
-
-        });
+        }
     }
 
     function init() {
@@ -110,7 +137,9 @@ define(function (require, exports, module) {
         $panel = $(Mustache.render(panel, Strings));
         PanelManager.createBottomPanel("fezvrasta.gist-manager.panel", $panel, 200);
 
-        $panel.on("click", "#load-gists", loadContent);
+        $panel.on("click", "#load-gists", function() {
+            loadContent($panel.find("#github-username").val(), $panel.find("#github-password").val());
+        });
 
     }
 
