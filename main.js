@@ -50,7 +50,9 @@ define(function (require, exports, module) {
                     return [value];
                 });
 
-                var $gist = $(Mustache.render(gist, gistData));
+                var vars = gistData;
+                $.extend(vars, Strings);
+                var $gist = $(Mustache.render(gist, vars));
                 $panel.find("#" + gistData.id).html($gist).data("loaded", true);
 
             });
@@ -67,42 +69,46 @@ define(function (require, exports, module) {
 
     function loadContent(username, password) {
 
-        if (password.length) { // If a password is defined, then try to login and get secret gists beside the public ones
+        var url,
+            headers;
 
-            $.ajax
-            ({
-                type: "GET",
-                url: "https://api.github.com/gists",
-                dataType: "json",
-                async: false,
-                headers: {
-                    "Authorization": "Basic " + btoa(username + ":" + password)
-                },
-                success: function (data) {
-                    gists = data;
-                    _renderContent(gists);
-                },
-                error: function () {
-                    _renderContent([]);
-                }
-            });
+        // Set headers and API URL depending if we are trying to get public gists, user's public gists or user's public&secret gists
+        if (username.length && password.length) {
 
-        } else { // If password is not defined, get just the public gists of the selected user
+            url = "https://api.github.com/gists";
+            headers = { "Authorization": "Basic " + btoa(username + ":" + password) };
 
-            $.getJSON("https://api.github.com/users/" + username + "/gists", function(data) {
-                gists = data;
-                _renderContent(gists);
-            })
-            .error( function() {
-                _renderContent([]);
-            });
+        } else if (username.length) {
+
+            url = "https://api.github.com/users/" + username + "/gists";
+            headers = { };
+
+        } else {
+
+            url = "https://api.github.com/gists";
+            headers =  { };
 
         }
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "json",
+            headers: headers,
+            success: function (data) {
+                gists = data;
+                _renderContent(gists);
+            },
+            error: function () {
+                _renderContent([]);
+            }
+        });
 
         function _renderContent(gists) {
 
             if (gists.length > 0) {
-                $content = $(Mustache.render(content, {"gists": gists}));
+                var vars = {"gists": gists};
+                $content = $(Mustache.render(content, vars));
             } else {
                 $content = $(Mustache.render(contentError, Strings));
             }

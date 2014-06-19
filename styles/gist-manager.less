@@ -10,7 +10,7 @@
         .btn-group {
             input {
                 margin: 0px;
-                width: 120px;
+                width: 100px;
                 border-right: 0;
                 padding-top: 3px;
                 border-radius: 4px 0 0 4px;
@@ -28,6 +28,7 @@
             background-color: #FFFFFF;
             height: 100%;
             box-shadow: inset -1px 1px 0px #DDDDDD;
+            overflow-y: auto;
             .list-group {
                 margin: 0;
                 .list-group-item {
@@ -35,7 +36,7 @@
                     a {
                         position: relative;
                         display: block;
-                        padding: 10px 15px;
+                        padding: 7px 15px;
                         margin-bottom: -1px;
                         border: 1px solid #DDDDDD;
                         &:hover {
@@ -61,6 +62,9 @@
                 display: none;
                 summary {
                     padding: 0 10px 10px 10px;
+                }
+                .btn-group {
+                    float: right;
                 }
                 .file {
                     margin-bottom: 15px;

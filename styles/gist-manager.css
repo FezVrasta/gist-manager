@@ -4,7 +4,7 @@
 }
 #gist-manager .toolbar .btn-group input {
   margin: 0px;
-  width: 120px;
+  width: 100px;
   border-right: 0;
   padding-top: 3px;
   border-radius: 4px 0 0 4px;
@@ -21,6 +21,7 @@
   background-color: #FFFFFF;
   height: 100%;
   box-shadow: inset -1px 1px 0px #dddddd;
+  overflow-y: auto;
 }
 #gist-manager .gist-manager-content .list .list-group {
   margin: 0;
@@ -31,7 +32,7 @@
 #gist-manager .gist-manager-content .list .list-group .list-group-item a {
   position: relative;
   display: block;
-  padding: 10px 15px;
+  padding: 7px 15px;
   margin-bottom: -1px;
   border: 1px solid #DDDDDD;
 }
@@ -56,6 +57,9 @@
 }
 #gist-manager .gist-manager-content .viewer .gist summary {
   padding: 0 10px 10px 10px;
+}
+#gist-manager .gist-manager-content .viewer .gist .btn-group {
+  float: right;
 }
 #gist-manager .gist-manager-content .viewer .gist .file {
   margin-bottom: 15px;
