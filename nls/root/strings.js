@@ -2,8 +2,9 @@
 
 define({
     SHOW_GIST_MANAGER:          "Show Gist Manager",
-    LOAD_GISTS:                 "Load gists",
-    NEW_GIST:                   "New gist",
+    LOAD_GISTS:                 "Load Gists",
+    NEW_GIST:                   "New Gist",
+    GIST_FROM_CURRENT_FILE:     "New Gist from current file",
     USERNAME:                   "username",
     PASSWORD:                   "password",
     DOWNLOAD_GIST:              "Download Gist",

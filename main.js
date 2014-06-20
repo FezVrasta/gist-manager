@@ -23,9 +23,10 @@ define(function (require, exports, module) {
         $content                = $(),
         gists                   = null;
 
-    var TOGGLE_PANEL  = "gist-manager.run",
-        GM_PANEL      = "gist-manager.panel",
-        NEW_GIST_MENU = "gist-manager.menu";
+    var TOGGLE_PANEL            = "gist-manager.run",
+        GIST_FROM_CURRENT_FILE  = "gist-manager.fromfile",
+        GM_PANEL                = "gist-manager.panel",
+        NEW_GIST_MENU           = "gist-manager.menu";
 
     // Show or hide Gist Manager panel when called
     function _handlePanelToggle() {
@@ -139,15 +140,21 @@ define(function (require, exports, module) {
     }
 
     // Post a new Gist
-    function newGist(username, password) {
+    function newGist(username, password, entireFile) {
 
-        var content,
-            gistFileName = "",
-            filename = DocumentManager.getCurrentDocument().file._name,
-            selection = EditorManager.getCurrentFullEditor().getSelectedText();
+        var content         = "",
+            gistFileName    = "",
+            filename        = DocumentManager.getCurrentDocument().file._name,
+            selection       = EditorManager.getCurrentFullEditor().getSelectedText();
 
-        content = (selection.length) ? selection : "";
-        if (selection.length && filename.length) {
+
+        if (entireFile) {
+            content = DocumentManager.getCurrentDocument()._masterEditor.document.file._contents;
+        } else if (selection.length) {
+            content = selection;
+        }
+
+        if (content.length  && filename.length) {
             gistFileName = filename;
         }
 
@@ -156,64 +163,64 @@ define(function (require, exports, module) {
         var dialog  = Dialogs.showModalDialogUsingTemplate(Mustache.render(newGistDialog, vars)),
             $dialog = dialog.getElement();
 
-            $dialog.
-                on("click", "#add-file", function() {
-                    $dialog.find("#prototype-file .file").first().clone().appendTo("#files");
+        $dialog.
+            on("click", "#add-file", function() {
+                $dialog.find("#prototype-file .file").first().clone().appendTo("#files");
+            });
+
+        dialog.done(function (buttonId) {
+            if (buttonId === "create-public-gist" || buttonId === "create-secret-gist") {
+
+                var url = "https://api.github.com/gists",
+                    headers;
+
+                var gistData = {
+                    "description": $dialog.find("[name=description]").val(),
+                    "public": (buttonId === "create-public-gist"),
+                    "files": { }
+                };
+
+                $dialog.find("#files .file").each( function() {
+                    gistData.files[$(this).find(".filename").val()] = {};
+                    gistData.files[$(this).find(".filename").val()].content = $(this).find(".content").val();
                 });
 
-            dialog.done(function (buttonId) {
-                if (buttonId === "create-public-gist" || buttonId === "create-secret-gist") {
-
-                    var url = "https://api.github.com/gists",
-                        headers;
-
-                    var gistData = {
-                        "description": $dialog.find("[name=description]").val(),
-                        "public": (buttonId === "create-public-gist"),
-                        "files": { }
-                    };
-
-                    $dialog.find("#files .file").each( function() {
-                        gistData.files[$(this).find(".filename").val()] = {};
-                        gistData.files[$(this).find(".filename").val()].content = $(this).find(".content").val();
-                    });
-
-                    // Set header if user wants to be authenticated
-                    if (username.length && password.length) {
-                        headers = { "Authorization": "Basic " + btoa(username + ":" + password) };
-                    } else {
-                        headers =  { };
-                    }
-
-                    console.log(JSON.stringify(gistData));
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        dataType: "json",
-                        headers: headers,
-                        data: JSON.stringify(gistData),
-                        success: function (response) {
-                            var vars = $.extend(response, Strings);
-                            var dialog = Dialogs.showModalDialogUsingTemplate(Mustache.render(successGistDialog, vars));
-
-                            dialog.done(function (buttonId) {
-                                if (buttonId === "open") {
-                                    brackets.app.openURLInDefaultBrowser(response.html_url);
-                                }
-                            });
-
-                            if (username.length && password.length) {
-                                loadContent(username, password);
-                            }
-                        },
-                        error: function (err) {
-                            var response = JSON.parse(err.responseText);
-                            Dialogs.showModalDialog("error-dialog", Strings.CREATION_ERROR, response.message);
-                            console.error("gist-manager:", err);
-                        }
-                    });
+                // Set header if user wants to be authenticated
+                if (username.length && password.length) {
+                    headers = { "Authorization": "Basic " + btoa(username + ":" + password) };
+                } else {
+                    headers =  { };
                 }
-            });
+
+                console.log(JSON.stringify(gistData));
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    dataType: "json",
+                    headers: headers,
+                    data: JSON.stringify(gistData),
+                    success: function (response) {
+                        var vars = $.extend(response, Strings);
+                        var dialog = Dialogs.showModalDialogUsingTemplate(Mustache.render(successGistDialog, vars));
+
+                        dialog.done(function (buttonId) {
+                            if (buttonId === "open") {
+                                brackets.app.openURLInDefaultBrowser(response.html_url);
+                            }
+                        });
+
+                        if (username.length && password.length) {
+                            loadContent(username, password);
+                        }
+                    },
+                    error: function (err) {
+                        var response = JSON.parse(err.responseText);
+                        Dialogs.showModalDialog("error-dialog", Strings.CREATION_ERROR, response.message);
+                        console.error("gist-manager:", err);
+                    }
+                });
+            }
+        });
     }
 
     function init() {
@@ -224,7 +231,14 @@ define(function (require, exports, module) {
         // Add menu option to toggle Gist Manager panel
         CommandManager.register(Strings.SHOW_GIST_MANAGER, TOGGLE_PANEL, _handlePanelToggle);
         var menu = Menus.getMenu(Menus.AppMenuBar.VIEW_MENU);
-        menu.addMenuItem(TOGGLE_PANEL, null, Menus.BEFORE);
+        menu.addMenuItem(TOGGLE_PANEL, null, Menus.AFTER);
+
+        // Add menu option to create Gist of the current file
+        CommandManager.register(Strings.GIST_FROM_CURRENT_FILE, GIST_FROM_CURRENT_FILE, function() {
+            newGist($panel.find("#github-username").val(), $panel.find("#github-password").val(), true);
+        });
+        var editMenu = Menus.getMenu(Menus.AppMenuBar.EDIT_MENU);
+        editMenu.addMenuItem(GIST_FROM_CURRENT_FILE, null, Menus.AFTER);
 
         // Add context menu option to create gist
         CommandManager.register(
