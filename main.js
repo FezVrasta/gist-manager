@@ -108,7 +108,9 @@ define(function (require, exports, module) {
                 _renderContent(gists);
             },
             error: function (err) {
-                Dialogs.showModalDialog("error-dialog", Strings.LOADING_ERROR, err.responseText.message);
+                var response = JSON.parse(err.responseText);
+                Dialogs.showModalDialog("error-dialog", Strings.LOADING_ERROR, response.message);
+                console.error("gist-manager:", err);
             }
         });
 
@@ -205,7 +207,9 @@ define(function (require, exports, module) {
                             }
                         },
                         error: function (err) {
-                            Dialogs.showModalDialog("error-dialog", Strings.CREATION_ERROR, err.responseText.message);
+                            var response = JSON.parse(err.responseText);
+                            Dialogs.showModalDialog("error-dialog", Strings.CREATION_ERROR, response.message);
+                            console.error("gist-manager:", err);
                         }
                     });
                 }
