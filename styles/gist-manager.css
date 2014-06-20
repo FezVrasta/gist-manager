@@ -96,3 +96,32 @@
 #gist-manager .gist-manager-content .viewer .gist .file:first-child {
   margin-bottom: 15px !important;
 }
+.new-gist-dialog .nav,
+.success-gist-dialog .nav {
+  border-bottom: 1px solid #c3c6c5;
+  margin-bottom: 5px;
+}
+.new-gist-dialog .nav li,
+.success-gist-dialog .nav li {
+  padding-bottom: 1px;
+}
+.new-gist-dialog .nav li a:hover,
+.success-gist-dialog .nav li a:hover {
+  background-color: #ECECEC;
+}
+.new-gist-dialog #prototype-file,
+.success-gist-dialog #prototype-file {
+  display: none;
+}
+.new-gist-dialog input,
+.success-gist-dialog input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 7px;
+}
+.new-gist-dialog textarea,
+.success-gist-dialog textarea {
+  box-sizing: border-box;
+  width: 100%;
+  height: 200px;
+}

@@ -1,0 +1,32 @@
+<div class="gist-manager new-gist-dialog template modal">
+    <div class="modal-header">
+        <h1 class="dialog-title">{{CREATE_NEW_GIST}}</h1>
+    </div>
+    <div class="modal-body">
+        <div class="dialog-message">
+            <input type="text" name="description" placeholder="{{GIST_DESCRIPTION_HERE}}">
+
+            <div id="prototype-file">
+                <div class="file">
+                    <input type="text" class="filename" placeholder="{{FILENAME_HERE}}">
+                    <textarea class="content" placeholder="{{GIST_CONTENT_HERE}}"></textarea>
+                </div>
+            </div>
+            <div id="files">
+                <div class="file">
+                    <input type="text" class="filename" placeholder="{{FILENAME_HERE}}" value="{{filename}}">
+                    <textarea class="content" placeholder="{{GIST_CONTENT_HERE}}">{{content}}</textarea>
+                </div>
+            </div>
+            <button class="btn btn-default" id="add-file">{{ADD_FILE}}</button>
+
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button data-button-id="create-public-gist" class="primary dialog-button btn btn-80">{{CREATE_PUBLIC_GIST}}</button>
+        {{#secret}}
+        <button data-button-id="create-secret-gist" class="primary dialog-button btn btn-80">{{CREATE_SECRET_GIST}}</button>
+        {{/secret}}
+        <button data-button-id="close" class="dialog-button btn btn-80">{{CANCEL}}</button>
+    </div>
+</div>
