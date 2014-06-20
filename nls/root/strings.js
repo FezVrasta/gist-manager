@@ -8,6 +8,8 @@ define({
     PASSWORD:                   "password",
     DOWNLOAD_GIST:              "Download Gist",
     OPEN_IN_BROWSER:            "Open in browser",
+    PUBLIC:                     "Public",
+    SECRET:                     "Secret",
     CREATE_NEW_GIST:            "Create new Gist",
     ADD_FILE:                   "Add file",
     CANCEL:                     "Cancel",

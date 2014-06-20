@@ -3,7 +3,7 @@
         <a class="btn btn-default btn-small" href="{{html_url}}/download">{{DOWNLOAD_GIST}}</a>
         <a class="btn btn-default btn-small" href="{{html_url}}">{{OPEN_IN_BROWSER}}</a>
     </div>
-    <summary>{{description}}</summary>
+    <summary><span class="label{{^public}} secret{{/public}}">{{#public}}{{PUBLIC}}{{/public}}{{^public}}{{SECRET}}{{/public}}</span>{{description}}</summary>
 </div>
 
 {{#files}}
