@@ -25,6 +25,9 @@ After you've published a new Gist a modal popup will appear letting you copy the
 - Load public and secret Gists of a specific GitHub user (providing password).
 - Open Gist in browser
 - Download Gist
+- Search Gist
+- Login with [application tokens](https://github.com/settings/applications).
+- Remember application tokens.
 
 ## To do:
 These are the features in the to do list of this extension:  

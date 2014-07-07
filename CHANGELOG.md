@@ -1,3 +1,7 @@
+## 0.0.7-dev
+* Added support for [GitHub authorization tokens](https://github.com/settings/applications).
+* Auth tokens are saved locally and can be loaded writing the owner's username in the username field.
+
 ## 0.0.6
 * Added option in menu to fastly create a Gist with the content of the current document.
 * Gists are now listed showing the first 15 chars of the description (if provided).

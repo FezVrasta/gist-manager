@@ -3,8 +3,13 @@
     <div class="toolbar simple-toolbar-layout">
         <span class="title">Gist Manager</span>
         <div class="btn-group">
-            <input type="text" id="github-username" placeholder="{{USERNAME}}">
+            <input type="text" id="github-username" placeholder="{{USERNAME}}" list="users">
             <input type="password" id="github-password" placeholder="{{PASSWORD}}">
+            <datalist id="users">
+                {{#auths}}
+                <option value="{{.}}">
+                {{/auths}}
+            </datalist>
             <button class="btn btn-default" id="load-gists">{{LOAD_GISTS}}</button>
             <button class="btn btn-default" id="new-gist">{{NEW_GIST}}</button>
         </div>

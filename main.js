@@ -11,6 +11,7 @@ define(function (require, exports, module) {
 
     var CommandManager          = brackets.getModule("command/CommandManager"),
         DocumentManager         = brackets.getModule("document/DocumentManager"),
+        PreferencesManager      = brackets.getModule("preferences/PreferencesManager"),
         Dialogs                 = brackets.getModule("widgets/Dialogs"),
         EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
@@ -23,13 +24,25 @@ define(function (require, exports, module) {
         $content                = $(),
         gists                   = null;
 
-    var TOGGLE_PANEL            = "gist-manager.run",
-        GIST_FROM_CURRENT_FILE  = "gist-manager.fromfile",
-        GM_PANEL                = "gist-manager.panel",
-        NEW_GIST_MENU           = "gist-manager.menu";
+    var PREFIX                  = "gist-manager",
+        TOGGLE_PANEL            = PREFIX + ".run",
+        GIST_FROM_CURRENT_FILE  = PREFIX + ".fromfile",
+        GM_PANEL                = PREFIX + ".panel",
+        NEW_GIST_MENU           = PREFIX + ".menu";
 
 
-    // Make :contains case insensitive
+    // Load preferences var
+    var prefs           = PreferencesManager.getExtensionPrefs(PREFIX);
+
+    var auths = prefs.get("auths") || false;
+    if (!auths) {
+        console.log("will be defined");
+        auths = {};
+        prefs.set("auths", auths);
+        prefs.save();
+    }
+
+    // Make :contains case insensitive (:containsIN)
     $.extend($.expr[":"], {
         "containsIN": function(elem, i, match) {
             return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
@@ -96,13 +109,26 @@ define(function (require, exports, module) {
 
         // Set headers and API URL depending if we are trying to get public gists
         // user's public gists or user's public & secret gists
-        if (username.length && password.length) {
+        if (username.length && password.length && password.length !== 40) {
+            // Basic login with username and password
             url = "https://api.github.com/gists";
             headers = { "Authorization": "Basic " + btoa(username + ":" + password) };
-        } else if (username.length) {
+        } else if (username.length && !password.length) {
+            // No login but filter by username
             url = "https://api.github.com/users/" + username + "/gists";
             headers = { };
+        } else if (username.length && password.length == 40) {
+            // OAuth login with authorization token
+            url = "https://api.github.com/gists";
+            headers = { "Authorization": "token " + password };
+            // Store Auth token to Brackets preferences file
+            auths[username] = {};
+            auths[username].username = username;
+            auths[username].password = password;
+            prefs.set("auths", auths);
+            prefs.save();
         } else {
+            // No login, show public gists
             url = "https://api.github.com/gists";
             headers = { };
         }
@@ -117,8 +143,9 @@ define(function (require, exports, module) {
 
                 $.map(gists, function(gist) {
 
-                    gist.shortDescription = gist.description.substring(0, 20);
-                    if (!gist.shortDescription.length) {
+                    if (typeof gist.description !== null && gist.description.length) {
+                        gist.shortDescription = gist.description.substring(0, 20);
+                    } else {
                         gist.shortDescription = "gist:" + gist.id;
                     }
                     return gist;
@@ -249,6 +276,16 @@ define(function (require, exports, module) {
         });
     }
 
+    function loadToken(username) {
+
+        if (auths[username]) {
+            $panel.find("#github-password").val(auths[username].password);
+        } else {
+            $panel.find("#github-password").val("");
+        }
+
+    }
+
     function init() {
 
         // Load compiled CSS of Gist Manager
@@ -276,7 +313,17 @@ define(function (require, exports, module) {
         contextMenu.addMenuItem(NEW_GIST_MENU);
 
         // Create Gist Manager panel
-        PanelManager.createBottomPanel(GM_PANEL, $(Mustache.render(panel, Strings)), 200);
+        var vars = Strings,
+            authsMustache = [];
+
+        $.each(auths, function(auth) {
+            authsMustache.push(auth);
+        });
+        console.log(authsMustache);
+
+        $.extend(vars, {"auths": authsMustache});
+        console.log("vars", vars);
+        PanelManager.createBottomPanel(GM_PANEL, $(Mustache.render(panel, vars)), 200);
 
         // Cache selection of Gist Manager panel
         $panel = $("#gist-manager");
@@ -291,6 +338,9 @@ define(function (require, exports, module) {
             })
             .on("keyup", "#filter-content", function() {
                 filterContent($panel.find("#filter-content").val());
+            })
+            .on("keyup", "#github-username", function() {
+                loadToken($panel.find("#github-username").val());
             })
             .on("click", ".close", _handlePanelToggle);
     }
