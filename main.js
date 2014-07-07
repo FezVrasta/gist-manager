@@ -106,6 +106,17 @@ define(function (require, exports, module) {
             headers: headers,
             success: function (data) {
                 gists = data;
+
+                $.map(gists, function(gist) {
+
+                    gist.shortDescription = gist.description.substring(0, 20);
+                    if (!gist.shortDescription.length) {
+                        gist.shortDescription = "gist:" + gist.id;
+                    }
+                    return gist;
+
+                });
+
                 _renderContent(gists);
             },
             error: function (err) {

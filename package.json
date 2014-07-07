@@ -4,7 +4,7 @@
     "description": "Create and view Github Gists within Brackets. (View > Show Gists Manager)",
     "keywords": ["gist", "GitHub", "snippets"],
     "homepage": "https://github.com/FezVrasta/gist-manager",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "author": "Fez Vrasta <info@mywebexpression.com> (http://www.mywebexpression.com)",
     "license": "MIT",
     "engines": {
