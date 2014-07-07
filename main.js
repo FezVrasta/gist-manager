@@ -28,6 +28,14 @@ define(function (require, exports, module) {
         GM_PANEL                = "gist-manager.panel",
         NEW_GIST_MENU           = "gist-manager.menu";
 
+
+    // Make :contains case insensitive
+    $.extend($.expr[":"], {
+        "containsIN": function(elem, i, match) {
+            return (elem.textContent || elem.innerText || "").toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+        }
+    });
+
     // Show or hide Gist Manager panel when called
     function _handlePanelToggle() {
 
@@ -148,6 +156,13 @@ define(function (require, exports, module) {
 
             });
         }
+    }
+
+    function filterContent(query) {
+
+        $panel.find(".gist-manager-content .list li").show();
+        $panel.find(".gist-manager-content .list li:not(:containsIN('" + query + "'))").hide();
+
     }
 
     // Post a new Gist
@@ -273,6 +288,9 @@ define(function (require, exports, module) {
             })
             .on("click", "#new-gist", function() {
                 newGist($panel.find("#github-username").val(), $panel.find("#github-password").val());
+            })
+            .on("keyup", "#filter-content", function() {
+                filterContent($panel.find("#filter-content").val());
             })
             .on("click", ".close", _handlePanelToggle);
     }

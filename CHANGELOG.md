@@ -1,6 +1,7 @@
 ## 0.0.6
 * Added option in menu to fastly create a Gist with the content of the current document.
-* Gists are now listed showing the first 15 chars of the description (if provided)
+* Gists are now listed showing the first 15 chars of the description (if provided).
+* Added tool to filter gists by keywords.
 
 ## 0.0.5
 * Added Gist creation support (anonymous, public, secret)

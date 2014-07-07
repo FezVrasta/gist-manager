@@ -2,6 +2,11 @@
 #gist-manager .toolbar .title {
   margin-right: 20px;
 }
+#gist-manager .toolbar #filter-content {
+  position: absolute;
+  right: 40px;
+  top: 5px;
+}
 #gist-manager .toolbar .btn-group input {
   margin: 0px;
   width: 100px;

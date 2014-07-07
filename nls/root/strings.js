@@ -7,6 +7,7 @@ define({
     GIST_FROM_CURRENT_FILE:     "New Gist from current file",
     USERNAME:                   "username",
     PASSWORD:                   "password",
+    FILTER:                     "Filter gists by keywords...",
     DOWNLOAD_GIST:              "Download Gist",
     OPEN_IN_BROWSER:            "Open in browser",
     PUBLIC:                     "Public",
