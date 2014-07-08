@@ -24,6 +24,7 @@ define({
     CREATION_SUCCESS:           "Gist successfully created",
     CLOSE:                      "Close",
     LOADING_ERROR:              "Loading error",
-    DELETE:                     "Delete Gist"
+    DELETE_GIST:                "Delete Gist",
+    DELETING_ERROR:             "Error during Gist deletion!"
 
 });

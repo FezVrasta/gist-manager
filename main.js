@@ -36,7 +36,6 @@ define(function (require, exports, module) {
 
     var auths = prefs.get("auths") || false;
     if (!auths) {
-        console.log("will be defined");
         auths = {};
         prefs.set("auths", auths);
         prefs.save();
@@ -158,10 +157,11 @@ define(function (require, exports, module) {
 
                 $.map(gists, function(gist) {
 
-                    if (typeof gist.description !== null && gist.description.length) {
-                        gist.shortDescription = gist.description.substring(0, 20);
-                    } else {
-                        gist.shortDescription = "gist:" + gist.id;
+                    gist.shortDescription = "gist:" + gist.id;
+                    if (typeof gist.description != null && gist.description != null) {
+                        if (gist.description.length) {
+                            gist.shortDescription = gist.description.substring(0, 20);
+                        }
                     }
                     return gist;
 
@@ -204,6 +204,11 @@ define(function (require, exports, module) {
 
         // These will be used in our Ajax call
         var auth = getAuth(username, password, "DELETE");
+
+        if (typeof auth === undefined || auth === undefined) {
+            Dialogs.showModalDialog("error-dialog", Strings.DELETING_ERROR, "You do not own this Gist, please check your login details.");
+            return;
+        }
 
         $.ajax({
             type: "DELETE",
@@ -283,7 +288,6 @@ define(function (require, exports, module) {
                     headers =  { };
                 }
 
-                console.log(JSON.stringify(gistData));
                 $.ajax({
                     type: "POST",
                     url: url,
@@ -357,10 +361,8 @@ define(function (require, exports, module) {
         $.each(auths, function(auth) {
             authsMustache.push(auth);
         });
-        console.log(authsMustache);
 
         $.extend(vars, {"auths": authsMustache});
-        console.log("vars", vars);
         PanelManager.createBottomPanel(GM_PANEL, $(Mustache.render(panel, vars)), 200);
 
         // Cache selection of Gist Manager panel

@@ -24,6 +24,7 @@ After you've published a new Gist a modal popup will appear letting you copy the
 - Load public Gists of a specific GitHub user.
 - Load public and secret Gists of a specific GitHub user (providing password).
 - Open Gist in browser
+- Delete Gist
 - Download Gist
 - Search Gist
 - Login with [application tokens](https://github.com/settings/applications).

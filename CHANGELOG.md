@@ -1,3 +1,6 @@
+## 0.1.0
+* First stable release, fix of various critical bugs.
+
 ## 0.0.8
 * Now is possible to delete gists.
 
