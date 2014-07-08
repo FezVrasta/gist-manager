@@ -97,11 +97,7 @@ define(function (require, exports, module) {
             .find("#" + gistData.id).show();
     }
 
-    // Load list of Gists
-    // if no username is provided then load the public list
-    // if username is provided then load the list of the selected username
-    // if password is provided then load even the secret Gists of the selected user
-    function loadContent(username, password) {
+    function getAuth(username, password, action) {
 
         // These will be used in our Ajax call
         var url,
@@ -133,11 +129,30 @@ define(function (require, exports, module) {
             headers = { };
         }
 
+        if (action === "GET") {
+            return {"url": url, "headers": headers};
+        } else if (action === "DELETE") {
+            if (headers.Authorization) {
+                return {"url": "https://api.github.com/gists/", "headers": headers};
+            }
+        }
+
+    }
+
+    // Load list of Gists
+    // if no username is provided then load the public list
+    // if username is provided then load the list of the selected username
+    // if password is provided then load even the secret Gists of the selected user
+    function loadContent(username, password) {
+
+        // These will be used in our Ajax call
+        var auth = getAuth(username, password, "GET");
+
         $.ajax({
             type: "GET",
-            url: url,
+            url: auth.url,
             dataType: "json",
-            headers: headers,
+            headers: auth.headers,
             success: function (data) {
                 gists = data;
 
@@ -183,6 +198,29 @@ define(function (require, exports, module) {
 
             });
         }
+    }
+
+    function deleteGist(username, password, id) {
+
+        // These will be used in our Ajax call
+        var auth = getAuth(username, password, "DELETE");
+
+        $.ajax({
+            type: "DELETE",
+            url: auth.url + id,
+            dataType: "json",
+            headers: auth.headers,
+            success: function () {
+                $panel.find("#" + id).remove();
+                $panel.find("*[data-id=" + id + "]").parent().remove();
+                $panel.find(".list li").first().addClass("active").find("a").trigger("click");
+            },
+            error: function (err) {
+                var response = JSON.parse(err.responseText);
+                Dialogs.showModalDialog("error-dialog", Strings.LOADING_ERROR, response.message);
+                console.error("gist-manager:", err);
+            }
+        });
     }
 
     function filterContent(query) {
@@ -341,6 +379,9 @@ define(function (require, exports, module) {
             })
             .on("keyup", "#github-username", function() {
                 loadToken($panel.find("#github-username").val());
+            })
+            .on("click", ".delete-gist", function() {
+                deleteGist($panel.find("#github-username").val(), $panel.find("#github-password").val(), $(this).attr("data-id"));
             })
             .on("click", ".close", _handlePanelToggle);
     }

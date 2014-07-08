@@ -1,4 +1,7 @@
-## 0.0.7-dev
+## 0.0.8
+* Now is possible to delete gists.
+
+## 0.0.7
 * Added support for [GitHub authorization tokens](https://github.com/settings/applications).
 * Auth tokens are saved locally and can be loaded writing the owner's username in the username field.
 

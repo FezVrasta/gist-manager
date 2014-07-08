@@ -23,6 +23,7 @@ define({
     CREATION_ERROR:             "Failed to create Gist",
     CREATION_SUCCESS:           "Gist successfully created",
     CLOSE:                      "Close",
-    LOADING_ERROR:              "Loading error"
+    LOADING_ERROR:              "Loading error",
+    DELETE:                     "Delete Gist"
 
 });
