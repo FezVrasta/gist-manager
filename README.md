@@ -6,6 +6,10 @@ It has lot of features and every help to improve them is very welcome.
 
 If you find a bug please [open an issue](https://github.com/FezVrasta/gist-manager/issues)!
 
+Do you like this project? Star it and [offer me some coffe](https://www.gittip.com/FezVrasta/)!
+
+<script data-gittip-username="FezVrasta" src="//gttp.co/v1.js"></script>
+
 
 ## Usage:
 To show Gist Manager click on **`View > Show Gist Manager`**, the panel will appear on bottom of Brackets.
