@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var panel                   = require("text!templates/panel.html"),
         content                 = require("text!templates/content.html"),
         gist                    = require("text!templates/gist.html"),
+        button                    = require("text!templates/button.html"),
         newGistDialog           = require("text!templates/newGistDialog.html"),
         successGistDialog       = require("text!templates/successGistDialog.html");
 
@@ -22,6 +23,7 @@ define(function (require, exports, module) {
 
     var $panel                  = $(),
         $content                = $(),
+        $button                  = $(),
         gists                   = null;
 
     var PREFIX                  = "gist-manager",
@@ -53,10 +55,12 @@ define(function (require, exports, module) {
 
         if ($panel.is(":visible")) {
             $panel.hide();
+            $button.removeClass('active');
             CommandManager.get(TOGGLE_PANEL).setChecked(false);
             EditorManager.focusEditor();
         } else {
             $panel.show();
+            $button.addClass('active');
             CommandManager.get(TOGGLE_PANEL).setChecked(true);
         }
         EditorManager.resizeEditor();
@@ -363,6 +367,7 @@ define(function (require, exports, module) {
         });
 
         $.extend(vars, {"auths": authsMustache});
+
         PanelManager.createBottomPanel(GM_PANEL, $(Mustache.render(panel, vars)), 200);
 
         // Cache selection of Gist Manager panel
@@ -386,6 +391,12 @@ define(function (require, exports, module) {
                 deleteGist($panel.find("#github-username").val(), $panel.find("#github-password").val(), $(this).attr("data-id"));
             })
             .on("click", ".close", _handlePanelToggle);
+
+        $('#main-toolbar .buttons').append(Mustache.render(button, vars));
+        $button = $('#gist-manager-button')
+            .on('click', function () {
+                _handlePanelToggle();
+            });
     }
 
     init();
