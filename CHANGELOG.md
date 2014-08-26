@@ -1,3 +1,6 @@
+## 0.1.1
+* Added Gist Manager button into main toolbar (you can disbled it from preferences file) by [malas34](https://github.com/malas34)
+
 ## 0.1.0
 * First stable release, fix of various critical bugs.
 
