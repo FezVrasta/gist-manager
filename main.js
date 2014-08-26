@@ -17,7 +17,8 @@ define(function (require, exports, module) {
         EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
         Menus                   = brackets.getModule("command/Menus"),
-        PanelManager            = brackets.getModule("view/PanelManager");
+        PanelManager            = brackets.getModule("view/PanelManager"),
+        PreferencesManager      = brackets.getModule("preferences/PreferencesManager");
 
     var Strings                 = require("strings");
 
@@ -34,7 +35,8 @@ define(function (require, exports, module) {
 
 
     // Load preferences var
-    var prefs           = PreferencesManager.getExtensionPrefs(PREFIX);
+    var prefs           = PreferencesManager.getExtensionPrefs(PREFIX),
+        stateManager    = PreferencesManager.stateManager.getPrefixedSystem(PREFIX);
 
     var auths = prefs.get("auths") || false;
     if (!auths) {
@@ -65,6 +67,7 @@ define(function (require, exports, module) {
         }
         EditorManager.resizeEditor();
     }
+
 
     // Render a given Gist inside the Gist Manager panel
     function renderGist(gistData) {
@@ -396,7 +399,8 @@ define(function (require, exports, module) {
         $button = $('#gist-manager-button')
             .on('click', function () {
                 _handlePanelToggle();
-            });
+            }).hide();
+        if( prefs.get('showButton') ) $button.show();
     }
 
     init();
