@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var panel                   = require("text!templates/panel.html"),
         content                 = require("text!templates/content.html"),
         gist                    = require("text!templates/gist.html"),
+        button                    = require("text!templates/button.html"),
         newGistDialog           = require("text!templates/newGistDialog.html"),
         successGistDialog       = require("text!templates/successGistDialog.html");
 
@@ -22,6 +23,7 @@ define(function (require, exports, module) {
 
     var $panel                  = $(),
         $content                = $(),
+        $button                  = $(),
         gists                   = null;
 
     var PREFIX                  = "gist-manager",
@@ -41,6 +43,12 @@ define(function (require, exports, module) {
         prefs.save();
     }
 
+    // If showButton preference is not defined, set it to true
+    if (prefs.get("showButton") === undefined) {
+        prefs.set("showButton", true);
+        prefs.save();
+    }
+
     // Make :contains case insensitive (:containsIN)
     $.extend($.expr[":"], {
         "containsIN": function(elem, i, match) {
@@ -53,14 +61,17 @@ define(function (require, exports, module) {
 
         if ($panel.is(":visible")) {
             $panel.hide();
+            $button.removeClass("active");
             CommandManager.get(TOGGLE_PANEL).setChecked(false);
             EditorManager.focusEditor();
         } else {
             $panel.show();
+            $button.addClass("active");
             CommandManager.get(TOGGLE_PANEL).setChecked(true);
         }
         EditorManager.resizeEditor();
     }
+
 
     // Render a given Gist inside the Gist Manager panel
     function renderGist(gistData) {
@@ -363,6 +374,7 @@ define(function (require, exports, module) {
         });
 
         $.extend(vars, {"auths": authsMustache});
+
         PanelManager.createBottomPanel(GM_PANEL, $(Mustache.render(panel, vars)), 200);
 
         // Cache selection of Gist Manager panel
@@ -386,6 +398,16 @@ define(function (require, exports, module) {
                 deleteGist($panel.find("#github-username").val(), $panel.find("#github-password").val(), $(this).attr("data-id"));
             })
             .on("click", ".close", _handlePanelToggle);
+
+        // Create button only if required by user settings
+        if (prefs.get("showButton")) {
+            // Append button to toolbar
+            $("#main-toolbar .buttons").append(Mustache.render(button));
+            $button = $("#gist-manager-button");
+
+            // Add events handler to Gist Manager button if required
+            $(document).on("click", "#gist-manager-button", _handlePanelToggle);
+        }
     }
 
     init();
