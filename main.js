@@ -17,8 +17,7 @@ define(function (require, exports, module) {
         EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
         Menus                   = brackets.getModule("command/Menus"),
-        PanelManager            = brackets.getModule("view/PanelManager"),
-        PreferencesManager      = brackets.getModule("preferences/PreferencesManager");
+        PanelManager            = brackets.getModule("view/PanelManager");
 
     var Strings                 = require("strings");
 
@@ -35,13 +34,18 @@ define(function (require, exports, module) {
 
 
     // Load preferences var
-    var prefs           = PreferencesManager.getExtensionPrefs(PREFIX),
-        stateManager    = PreferencesManager.stateManager.getPrefixedSystem(PREFIX);
+    var prefs           = PreferencesManager.getExtensionPrefs(PREFIX);
 
     var auths = prefs.get("auths") || false;
     if (!auths) {
         auths = {};
         prefs.set("auths", auths);
+        prefs.save();
+    }
+
+    // If showButton preference is not defined, set it to true
+    if (prefs.get("showButton") === undefined) {
+        prefs.set("showButton", true);
         prefs.save();
     }
 
@@ -57,12 +61,12 @@ define(function (require, exports, module) {
 
         if ($panel.is(":visible")) {
             $panel.hide();
-            $button.removeClass('active');
+            $button.removeClass("active");
             CommandManager.get(TOGGLE_PANEL).setChecked(false);
             EditorManager.focusEditor();
         } else {
             $panel.show();
-            $button.addClass('active');
+            $button.addClass("active");
             CommandManager.get(TOGGLE_PANEL).setChecked(true);
         }
         EditorManager.resizeEditor();
@@ -395,12 +399,15 @@ define(function (require, exports, module) {
             })
             .on("click", ".close", _handlePanelToggle);
 
-        $('#main-toolbar .buttons').append(Mustache.render(button, vars));
-        $button = $('#gist-manager-button')
-            .on('click', function () {
-                _handlePanelToggle();
-            }).hide();
-        if( prefs.get('showButton') ) $button.show();
+        // Create button only if required by user settings
+        if (prefs.get("showButton")) {
+            // Append button to toolbar
+            $("#main-toolbar .buttons").append(Mustache.render(button));
+            $button = $("#gist-manager-button");
+
+            // Add events handler to Gist Manager button if required
+            $(document).on("click", "#gist-manager-button", _handlePanelToggle);
+        }
     }
 
     init();
